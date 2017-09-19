@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=euc-kr">
+    <title>오프라인 글자수 카운터</title>
+    <script>
+function chk(str) {
+	document.getElementById("len").innerHTML="공백 포함 글자수: "+str.length;
+}
+    </script>
+  </head>
+  <body>
+<h1>오프라인 글자수 카운터</h1>
+<p id="len">공백 포함 글자수: 0</p>
+<textarea rows="30" cols="100" id="txtcontent" onkeyup="chk(this.value)"></textarea>
+<a href="https://gwangmin.github.io">gwangmin</a>
+  </body>
+</html>
