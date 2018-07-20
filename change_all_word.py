@@ -1,3 +1,8 @@
+'''
+This script changes all src word to dst word.
+More information, please read the help msg 'python change_all_word.py -h'.
+'''
+
 import os
 import sys
 
