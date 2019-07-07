@@ -1,5 +1,6 @@
 '''
 This script removes .pyc/__pycache__ in current directory or sub directory
+for bash
 '''
 
 import os
