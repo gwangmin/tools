@@ -1,4 +1,9 @@
-# Editing_tools
-* change_all_word.py: Change all src word to dst word.(in current or sub directory)
-* remove_python_others: Remove .pyc/__pycache__ in current or sub directory.
+# tools
+made by python
 
+## Contents
+### For editing
+* editing/change_all_word.py: Change all src word to dst word.(in current or sub directory)
+* editing/remove_others: Remove .pyc, __pycache__, .DS_Store, .ipynb_checkpoints in current or sub directory(use rm).
+### For socket
+* socket/sock.py: Socket wrapper
