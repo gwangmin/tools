@@ -1,5 +1,4 @@
 # tools
-made by python
 
 ## Contents
 ### For editing
