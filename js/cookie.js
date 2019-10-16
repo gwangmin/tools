@@ -10,7 +10,7 @@ function writeCookie(name, value, days) {
   }
 
   // Set the cookie to the name, value, and expiration date
-  document.cookie = name + "=" + value + expires + "; path=/";
+  document.cookie = name + "=" + value + expires;
 }
 
 function readCookie(name) {
