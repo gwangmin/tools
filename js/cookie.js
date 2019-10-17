@@ -1,4 +1,4 @@
-function writeCookie(name, value, days) {
+function writeCookie(name, value, days, path=undefined) {
   // By default, there is no expiration so the cookie is temporary
   var expires = "";
 
@@ -10,7 +10,14 @@ function writeCookie(name, value, days) {
   }
 
   // Set the cookie to the name, value, and expiration date
-  document.cookie = name + "=" + value + expires;
+  var cookie = name + "=" + value + expires;
+  
+  // Path
+  if (path != undefined)
+    cookie += "; path=" + path;
+  
+  // Write the cookie
+  document.cookie = cookie;
 }
 
 function readCookie(name) {
