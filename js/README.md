@@ -1,3 +1,3 @@
 # Contents
-* js/cookie.js: cookie handler
+* cookie.js: cookie handler
 
