@@ -9,8 +9,6 @@
 * python/
 ### For js
 * js/
-### For keras pre-trained model
-* keras_easy_pretrained/
 ### For crawling
 * crawling/
 
