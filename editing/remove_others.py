@@ -1,5 +1,5 @@
 '''
-This script removes .pyc, __pycache__, .DS_Store, .ipynb_checkpoints in current directory or sub directory
+This script removes .pyc, __pycache__, .DS_Store, .ipynb_checkpoints in current directory and sub directory
 in bash
 '''
 
