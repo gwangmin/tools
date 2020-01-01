@@ -13,4 +13,6 @@
 * crawling/
 ### For plot
 * plot/
+### For image
+* img/
 
