@@ -11,8 +11,6 @@
 * js/
 ### For crawling
 * crawling/
-### For plot
-* plot/
-### For image
-* img/
+### For visual(plot, cv)
+* visual/
 
