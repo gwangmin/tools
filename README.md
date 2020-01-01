@@ -11,4 +11,6 @@
 * js/
 ### For crawling
 * crawling/
+### For plot
+* plot/
 
