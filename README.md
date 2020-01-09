@@ -9,7 +9,7 @@
 * socket/
 ### For cookie
 * web_cookie/
-### For crawling
+### For crawling or api request
 * crawling/
 ### For visual(plot, cv)
 * visual/
