@@ -1,4 +1,6 @@
 '''
+This script provides image read, write, and display.
+
 img format: bgr, channels last, ndarray
 '''
 

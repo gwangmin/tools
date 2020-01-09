@@ -1,3 +1,5 @@
+" vim config file(I like these settings)
+
 set smartindent
 set cindent
 set tabstop=4

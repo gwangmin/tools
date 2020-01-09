@@ -1,5 +1,5 @@
 '''
-This script changes all src word to dst word.
+This script changes all src word to dst word.(in current and sub dirs)
 More information, please read the help msg 'python change_all_word.py -h'.
 '''
 

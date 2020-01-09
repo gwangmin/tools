@@ -1,6 +1,7 @@
 '''
+[!] This script remove files [!]
 This script removes .pyc, __pycache__, .DS_Store, .ipynb_checkpoints in current directory and sub directory
-in bash
+in bash(use rm)
 '''
 
 import os

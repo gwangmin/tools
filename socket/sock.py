@@ -1,5 +1,5 @@
 '''
-Socket wrapper.
+Python socket wrapper.
 
 
 How to use socket

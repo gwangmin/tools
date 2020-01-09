@@ -5,12 +5,16 @@
 * git_repo_template/
 ### For editing
 * editing/
-### For python
-* python/
-### For js
-* js/
+### For socket
+* socket/
+### For cookie
+* web_cookie/
 ### For crawling
 * crawling/
 ### For visual(plot, cv)
 * visual/
+### For multi processing
+* multi-processing/
+### For time processing
+* time/
 

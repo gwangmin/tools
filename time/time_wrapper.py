@@ -1,4 +1,6 @@
 '''
+This script provides stopwatch, current time check.
+
 Defined vars: 
 Defined funcs: 
 Defined classes: StopWatch(), Now(lang)

@@ -1,4 +1,6 @@
 '''
+Multi-processing wrapper
+
 Defined vars: queue, cpu_count
 Defined funcs: procs(*args, context=None), pool(func_with_arg, arg_list, num_of_proc, context=None)
 Defined classes: 

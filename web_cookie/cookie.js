@@ -1,3 +1,8 @@
+/*
+functions:
+   Read, Write, Delete cookie
+*/
+
 function writeCookie(name, value, days, path=undefined) {
   // By default, there is no expiration so the cookie is temporary
   var expires = "";
