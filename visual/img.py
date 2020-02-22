@@ -46,6 +46,7 @@ def show_multi(rows, cols, imgs, names=None):
             plt.title('img '+str(i))
         else:
             plt.title(names[i])
+        plt.grid(False)
         plt.xticks([])
         plt.yticks([])
     plt.tight_layout()
