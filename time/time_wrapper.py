@@ -19,7 +19,7 @@ class StopWatch:
         '''
         Start measure
         '''
-        self.start = time.time()
+        self.start_ = time.time()
 
     def end(self, acc=2):
         '''
@@ -27,7 +27,7 @@ class StopWatch:
         
         acc: ndigits to round. if -1, print all digits.
         '''
-        self.interval = time.time() - self.start
+        self.interval = time.time() - self.start_
         if acc == -1:
             print('Spend time: ' + str(self.interval) + 's')
         else:
