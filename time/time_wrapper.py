@@ -93,7 +93,7 @@ class Now:
     based local time
     12-hour clock
     support lang: eng(usa), kor
-    other rules: korea (ex. midnight == am 12)
+    midnight: am 0
     
     member:
         lang - language
@@ -133,19 +133,23 @@ class Now:
         '''
         tm = self.struct_time
         h24 = tm.tm_hour # [0, 23]
-        if h24 == 0:
+        if (h24 == 0) or (h24 == 24):
+            # 0, 24
             self.hour_range = 'am'
-            self.hour = 12
+            self.hour = 0
         elif 0 < h24 <= 11:
+            # 1 ~ 11
             self.hour_range = 'am'
             self.hour = h24
         elif h24 == 12:
+            # 12
             if tm.tm_min == 0:
                 self.hour_range = 'am'
             else:
                 self.hour_range = 'pm'
             self.hour = h24
-        elif 12 < h24:
+        elif 12 < h24 < 24:
+            # 13 ~ 23
             self.hour_range = 'pm'
             self.hour = h24 - 12
 
