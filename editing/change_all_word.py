@@ -7,22 +7,22 @@ import os
 import sys
 
 
-def change_word(fname,before,after):
+def change_word(fname, src, dst):
     '''
-    Change before to after in file named fname.
+    Change src to dst in file named fname.
     
     fname: file name
-    before: name to change
-    after: changed name
+    src: name to change
+    dst: changed name
     '''
     con = None
     
-    with open(fname,'r') as f:
+    with open(fname, 'r') as f:
         con = f.read()
         
-    con = con.replace(before,after)
+    con = con.replace(src, dst)
 
-    with open(fname,'w') as f:
+    with open(fname, 'w') as f:
         f.write(con)
 
 
@@ -30,21 +30,20 @@ def help_msg():
     '''
     Print this program's help message
     '''
-    print('python '+sys.argv[0]+' [src_word] [dst_word]')
+    return 'python ' + sys.argv[0] + ' <src_word> <dst_word>'
 
 
 def main():
     if sys.argv[1] == '-h':
-        help_msg()
+        print( help_msg() )
         exit(0)
     
     for path,dirs,files in os.walk('.'):
         for fname in files:
             if fname != sys.argv[0]:
-                change_word(fname,sys.argv[1],sys.argv[2])
+                f = path + '/' + fname
+                change_word(f, sys.argv[1], sys.argv[2])
 
 
 if __name__ == '__main__':
     main()
-
-
