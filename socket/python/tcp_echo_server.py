@@ -4,11 +4,12 @@ sock.py example
 
 import sock
 
-port = sock.TEST_PORT
+HOST = ''
+PORT = sock.TEST_PORT
 
 
 serveSock = sock.sock('tcp', log=True)
-serveSock.bind('', port)
+serveSock.bind(HOST, PORT)
 serveSock.listen()
 s, addr = serveSock.accept()
 

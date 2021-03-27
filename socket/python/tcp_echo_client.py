@@ -4,14 +4,15 @@ sock.py example
 
 import sock
 
-port = sock.TEST_PORT
+HOST = '127.0.0.1'
+PORT = sock.TEST_PORT
 
 
 s = sock.sock('tcp', log=True)
-s.connect('127.0.0.1', port)
+s.connect(HOST, PORT)
 
 while True:
-    s.send(input('input: ') + '\n')
+    s.send(input('input: ') + '\n') # input() doesn't contain '\n'
     print(s.recv_with_delimiter('\n'))
 
 s.close()

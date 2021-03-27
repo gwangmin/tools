@@ -1,7 +1,7 @@
 '''
 Python tcp, udp socket wrapper.
 provide log feature
-distinct tcp end
+distinct tcp data end
 but not exception handling because of debugging
 
 
@@ -20,15 +20,20 @@ Client
 4. Call close().
 '''
 
-from socket import *
+from socket import socket
+from socket import AF_INET, SOCK_STREAM, SOCK_DGRAM
 
 # DO NOT USE
 # for example
-TEST_PORT = 8099
+TEST_PORT = 8022
 
 class sock(object):
     '''
-    Socket wrapper
+    tcp, udp socket wrapper
+
+    features:
+        - log
+        - distinct tcp data end
     '''
     def __init__(self, type_='tcp', log=True, copy=None):
         '''
@@ -36,7 +41,7 @@ class sock(object):
         
         type_: (Optional) Socket type or python socket. 'tcp' or 'udp'. Default 'tcp'.
         log: (Optional) whether print log. default True
-        copy: (Optional) if not None, copy(copy creator).
+        copy: (Optional) if not None, copy(copy creator, for accept method).
         '''
         self.type = type_
         self.log = log
@@ -51,7 +56,7 @@ class sock(object):
             self.sock = socket(AF_INET,SOCK_DGRAM)
             print('[*] Create UDP socket')
         else:
-            raise Exception('')
+            raise Exception('Only tcp, udp')
 
     def bind(self, host, port):
         '''
@@ -129,13 +134,12 @@ class sock(object):
             raise Exception('recv_fixed_length is only for tcp')
 
         buf = b''
-        for i in range(length):
+        for _ in range(length):
             buf += self.sock.recv(1)
         buf = buf.decode()
         if self.log:
             print('[*] Recv: ' + buf)
         return buf
-
 
     def recv_with_delimiter(self, delimiter):
         '''
@@ -143,12 +147,11 @@ class sock(object):
         
         delimiter: this string represents data end.
 
-        Return: received string
+        Return: received string(contains delimiter)
         '''
         if not self.type == 'tcp':
             raise Exception('recv_with_delimiter is only for tcp')
         
-        length = len(delimiter)
         delimiter = delimiter.encode()
         buf = b''
         while True:
@@ -174,7 +177,7 @@ class sock(object):
         bytes_, addr = self.sock.recvfrom(bufsize)
         data = bytes_.decode()
         if self.log:
-            print('[*] Recvfrom: ' + addr + ', ' + data)
+            print('[*] Recvfrom: ' + str(addr) + ', ' + data)
         return data, addr
                 
     def close(self):
