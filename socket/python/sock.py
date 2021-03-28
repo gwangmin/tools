@@ -204,8 +204,8 @@ class sock(object):
         '''
         Close socket and print log.
         '''
-        self.sock.close()
-        if self.log:
-            print('[*] Close socket')
-
-
+        if self.sock != None:
+            self.sock.close()
+            self.sock = None
+            if self.log:
+                print('[*] Close socket')
