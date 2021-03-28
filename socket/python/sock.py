@@ -2,6 +2,7 @@
 Python tcp, udp socket wrapper.
 provide log feature
 distinct tcp data end
+handle data is bytes or string
 but not exception handling because of debugging
 
 
@@ -30,6 +31,7 @@ class sock(object):
     features:
         - log
         - distinct tcp data end
+        - handle data is bytes or string
 
     methods:
         - __init__(type, log=True, copy=None)
@@ -38,9 +40,9 @@ class sock(object):
         - accept()
         - connect(host, port)
         - send(msg, host=None, port=None)
-        - recv_fixed_length(length)
-        - recv_with_delimiter(delimiter)
-        - recvfrom(bufsize=1024)
+        - recv_fixed_length(length, byte=False)
+        - recv_with_delimiter(delimiter, byte=False)
+        - recvfrom(bufsize=1024, byte=False)
         - close()
     '''
     def __init__(self, type_='tcp', log=True, copy=None):
@@ -115,28 +117,32 @@ class sock(object):
         Send message and print log.
         If UDP, require addr.
         
-        msg: Message. string
+        msg: Message. string or bytes
         host: (udp) remote host. string
         port: (udp) remote port. int
         '''
+        if isinstance(msg, str):
+            msg = msg.encode()
+        # if tcp
         if self.type == 'tcp':
-            self.sock.sendall(msg.encode())# sendall arg: bytes, not str
+            self.sock.sendall(msg)# sendall arg: bytes, not str
             if self.log:
-                print('[*] Send: ' + msg)
-
+                print('[*] Send: ' + str(msg))
+        # if udp
         elif self.type == 'udp':
             addr = (host, port)
-            self.sock.sendto(msg.encode(), addr)
+            self.sock.sendto(msg, addr)
             if self.log:
-                print('[*] Send: ' + msg + ' to ' + str(addr))
+                print('[*] Send: ' + str(addr) + '; ' + str(msg))
 
-    def recv_fixed_length(self, length):
+    def recv_fixed_length(self, length, byte=False):
         '''
         Receive fixed length data and print log
 
-        length: data length (bytes)
+        length: data length (unit: bytes)
+        byte: (Optional) whether - return type is bytes. default False(str)
 
-        Return: received data(str)
+        Return: received data
         '''
         if not self.type == 'tcp':
             raise Exception('recv_fixed_length is only for tcp')
@@ -144,38 +150,43 @@ class sock(object):
         buf = b''
         for _ in range(length):
             buf += self.sock.recv(1)
-        buf = buf.decode()
+        if not byte:
+            buf = buf.decode()
         if self.log:
-            print('[*] Recv: ' + buf)
+            print('[*] Recv: ' + str(buf))
         return buf
 
-    def recv_with_delimiter(self, delimiter):
+    def recv_with_delimiter(self, delimiter, byte=False):
         '''
         Receive data and print log.
         
-        delimiter: this string represents data end.
+        delimiter: this param represents data end.
+        byte: (Optional) whether - return type is bytes. default False(str)
 
-        Return: received string(contains delimiter)
+        Return: received data(contains delimiter)
         '''
         if not self.type == 'tcp':
             raise Exception('recv_with_delimiter is only for tcp')
         
-        delimiter = delimiter.encode()
+        if isinstance(delimiter, str):
+            delimiter = delimiter.encode()
         buf = b''
         while True:
             buf += self.sock.recv(1)
             if buf.endswith(delimiter):
                 break
-        buf = buf.decode()
+        if not byte:
+            buf = buf.decode()
         if self.log:
-            print('[*] Recv: ' + buf)
+            print('[*] Recv: ' + str(buf))
         return buf
 
-    def recvfrom(self, bufsize=1024):
+    def recvfrom(self, bufsize=1024, byte=False):
         '''
         Receive data and print log.
         
-        bufsize: (Optional) 
+        bufsize: (Optional) buffer size. default 1024
+        byte: (Optional) whether - return type is bytes. default False(str)
 
         Return: received string, addr pair
         '''
@@ -183,9 +194,10 @@ class sock(object):
             raise Exception('recvfrom is only for udp')
 
         bytes_, addr = self.sock.recvfrom(bufsize)
-        data = bytes_.decode()
+        if not byte:
+            data = bytes_.decode()
         if self.log:
-            print('[*] Recvfrom: ' + str(addr) + ', ' + data)
+            print('[*] Recvfrom: ' + str(addr) + '; ' + str(data))
         return data, addr
                 
     def close(self):
