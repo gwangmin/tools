@@ -23,10 +23,6 @@ Client
 from socket import socket
 from socket import AF_INET, SOCK_STREAM, SOCK_DGRAM
 
-# DO NOT USE
-# for example
-TEST_PORT = 8022
-
 class sock(object):
     '''
     tcp, udp socket wrapper

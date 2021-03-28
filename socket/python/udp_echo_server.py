@@ -1,7 +1,7 @@
 import sock
 
 HOST = ''
-PORT = sock.TEST_PORT
+PORT = 8322
 
 
 s = sock.sock('udp', log=True)

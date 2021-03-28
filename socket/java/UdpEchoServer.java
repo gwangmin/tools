@@ -10,7 +10,7 @@ public class UdpEchoServer {
             s = new UdpSock(new DatagramSocket(PORT), true);
             while (true) {
                 String[] r = s.recv();
-                String host = r[1].split(":")[0];
+                String host = r[1].split(":")[0].substring(1);
                 int port = Integer.parseInt(r[1].split(":")[1]);
                 s.send(r[0], host, port);
             }

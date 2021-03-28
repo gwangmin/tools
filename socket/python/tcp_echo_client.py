@@ -5,7 +5,7 @@ sock.py example
 import sock
 
 HOST = '127.0.0.1'
-PORT = sock.TEST_PORT
+PORT = 8322
 
 
 s = sock.sock('tcp', log=True)

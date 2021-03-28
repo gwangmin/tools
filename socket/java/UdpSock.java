@@ -76,7 +76,6 @@ public class UdpSock {
         // return
         String data = new String(dp.getData());
         String addr = dp.getAddress() + ":" + dp.getPort();
-        addr = addr.substring(1);
         if (log)
             System.out.println("[*] Recvfrom: " + data + "; " + addr);
         return new String[]{data, addr};
