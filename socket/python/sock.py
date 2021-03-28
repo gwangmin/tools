@@ -30,6 +30,18 @@ class sock(object):
     features:
         - log
         - distinct tcp data end
+
+    methods:
+        - __init__(type, log=True, copy=None)
+        - bind(host, port)
+        - listen(backlog=3)
+        - accept()
+        - connect(host, port)
+        - send(msg, host=None, port=None)
+        - recv_fixed_length(length)
+        - recv_with_delimiter(delimiter)
+        - recvfrom(bufsize=1024)
+        - close()
     '''
     def __init__(self, type_='tcp', log=True, copy=None):
         '''
