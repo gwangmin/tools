@@ -55,16 +55,22 @@ class sock(object):
         '''
         self.type = type_
         self.log = log
+        self.recv_buf = b''
         # copy creator
         if not copy is None:
             self.sock = copy
             return
+        # tcp
         if type_ == 'tcp':
             self.sock = socket(AF_INET,SOCK_STREAM)
-            print('[*] Create TCP socket')
+            if log:
+                print('[*] Create TCP socket')
+        # udp
         elif type_ == 'udp':
             self.sock = socket(AF_INET,SOCK_DGRAM)
-            print('[*] Create UDP socket')
+            if log:
+                print('[*] Create UDP socket')
+        # else
         else:
             raise Exception('Only tcp, udp')
 
@@ -93,7 +99,7 @@ class sock(object):
         '''
         Accept and print log.
 
-        return (sock obj, addr)
+        Return (sock obj, addr)
         '''
         client_sock, addr = self.sock.accept()
         client_sock = sock('tcp', log=self.log, copy=client_sock)
@@ -148,10 +154,31 @@ class sock(object):
             raise Exception('recv_fixed_length is only for tcp')
 
         buf = b''
+
+        ### 1
         for _ in range(length):
             buf += self.sock.recv(1)
+
+        ### 2
+        #while True:
+        #    if len(self.recv_buf) > 0:
+        #        buf += self.recv_buf[:length]
+        #    else:
+        #        buf += self.sock.recv(length)
+        #    buflen = len(buf)
+        #    if buflen < length:
+        #        length -= buflen
+        #    elif buflen == length:
+        #        break
+        #    else:
+        #        self.recv_buf += buf[length:]
+        #        buf = buf[:length]
+        #        break
+
+        # encoding
         if not byte:
             buf = buf.decode()
+        # log
         if self.log:
             print('[*] Recv: ' + str(buf))
         return buf
@@ -171,12 +198,32 @@ class sock(object):
         if isinstance(delimiter, str):
             delimiter = delimiter.encode()
         buf = b''
+
+        ### 1
         while True:
             buf += self.sock.recv(1)
             if buf.endswith(delimiter):
                 break
+
+        ### 2
+        #length = 1024
+        #while True:
+        #    if len(self.recv_buf) > 0:
+        #        buf += self.recv_buf[:length]
+        #    else:
+        #        buf += self.sock.recv(length)
+        #    if buf.find(delimiter) == -1:
+        #        length -= len(buf)
+        #    else:
+        #        idx = buf.find(delimiter)
+        #        self.recv_buf += buf[idx+1:]
+        #        buf = buf[:idx+1]
+        #        break
+
+        # encoding
         if not byte:
             buf = buf.decode()
+        # log
         if self.log:
             print('[*] Recv: ' + str(buf))
         return buf

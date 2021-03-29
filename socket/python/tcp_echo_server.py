@@ -15,6 +15,7 @@ s, addr = serveSock.accept()
 
 while True:
     s.send(s.recv_with_delimiter('\n'))
+    #s.send(s.recv_fixed_length(3))
 
 s.close()
 serveSock.close()
