@@ -8,14 +8,14 @@ HOST = ''
 PORT = 8322
 
 
-serveSock = sock.sock('tcp', log=True)
-serveSock.bind(HOST, PORT)
-serveSock.listen()
-s, addr = serveSock.accept()
+servSock = sock.sock('tcp', log=True)
+servSock.bind(HOST, PORT)
+servSock.listen()
+s, addr = servSock.accept()
 
 while True:
     s.send(s.recv_with_delimiter('\n'))
     #s.send(s.recv_fixed_length(3))
 
 s.close()
-serveSock.close()
+servSock.close()
