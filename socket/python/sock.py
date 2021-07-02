@@ -187,7 +187,7 @@ class sock(object):
         '''
         Receive data and print log.
         
-        delimiter: this param represents data end.
+        delimiter: this str represents data end.
         byte: (Optional) whether - return type is bytes. default False(str)
 
         Return: received data(contains delimiter)
