@@ -141,12 +141,12 @@ class sock(object):
             if self.log:
                 print('[*] Send: ' + str(addr) + '; ' + str(msg))
 
-    def recv_fixed_length(self, length, byte=False):
+    def recv_fixed_length(self, length, encoding='utf-8'):
         '''
         Receive fixed length data and print log
 
         length: data length (unit: bytes)
-        byte: (Optional) whether - return type is bytes. default False(str)
+        encoding: (Optional) when decode result, using this encoding. if None, return bytes result. default 'utf-8'
 
         Return: received data
         '''
@@ -175,20 +175,20 @@ class sock(object):
         #        buf = buf[:length]
         #        break
 
-        # encoding
-        if not byte:
-            buf = buf.decode()
+        # decoding
+        if encoding is not None:
+            buf = buf.decode(encoding=encoding)
         # log
         if self.log:
             print('[*] Recv: ' + str(buf))
         return buf
 
-    def recv_with_delimiter(self, delimiter, byte=False):
+    def recv_with_delimiter(self, delimiter, encoding='utf-8'):
         '''
         Receive data and print log.
         
         delimiter: this str represents data end.
-        byte: (Optional) whether - return type is bytes. default False(str)
+        encoding: (Optional) when decode result, using this encoding. if None, return bytes result. default 'utf-8'
 
         Return: received data(contains delimiter)
         '''
@@ -220,29 +220,29 @@ class sock(object):
         #        buf = buf[:idx+1]
         #        break
 
-        # encoding
-        if not byte:
-            buf = buf.decode()
+        # decoding
+        if encoding is not None:
+            buf = buf.decode(encoding=encoding)
         # log
         if self.log:
             print('[*] Recv: ' + str(buf))
         return buf
 
-    def recvfrom(self, bufsize=1024, byte=False):
+    def recvfrom(self, bufsize=1024, encoding='utf-8'):
         '''
         Receive data and print log.
         
         bufsize: (Optional) buffer size. default 1024
-        byte: (Optional) whether - return type is bytes. default False(str)
+        encoding: (Optional) when decode result, using this encoding. if None, return bytes result. default 'utf-8'
 
-        Return: received string, addr pair
+        Return: received data, addr pair
         '''
         if not self.type == 'udp':
             raise Exception('recvfrom is only for udp')
 
         bytes_, addr = self.sock.recvfrom(bufsize)
-        if not byte:
-            data = bytes_.decode()
+        if encoding is not None:
+            data = bytes_.decode(encoding=encoding)
         if self.log:
             print('[*] Recvfrom: ' + str(addr) + '; ' + str(data))
         return data, addr
