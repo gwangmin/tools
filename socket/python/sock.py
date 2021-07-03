@@ -34,15 +34,15 @@ class sock(object):
         - handle data is bytes or string
 
     methods:
-        - __init__(type, log=True, copy=None)
-        - bind(host, port)
-        - listen(backlog=3)
+        - __init__()
+        - bind()
+        - listen()
         - accept()
-        - connect(host, port)
-        - send(msg, host=None, port=None)
-        - recv_fixed_length(length, byte=False)
-        - recv_with_delimiter(delimiter, byte=False)
-        - recvfrom(bufsize=1024, byte=False)
+        - connect()
+        - send()
+        - recv_fixed_length()
+        - recv_with_delimiter()
+        - recvfrom()
         - close()
     '''
     def __init__(self, type_='tcp', log=True, copy=None):
