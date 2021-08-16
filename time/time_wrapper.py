@@ -1,10 +1,10 @@
 '''
 This script provides stopwatch, current time check.
+
 Defined vars: 
 Defined funcs: convert_sec(sec), get_current_timestamp()
 Defined classes: StopWatch(), Now(lang)
 '''
-
 
 import time
 import datetime
@@ -16,19 +16,24 @@ def convert_sec(sec):
         
     sec: second(s).
     '''
-    sec = float(sec)
-    sec_point = str(sec).split('.')[1]
+    under_point = None
+    # 소수점이 있으면
+    if str(sec).find('.') != -1:
+        under_point = str(sec).split('.')[1]
+    
     s = int(sec)
 
-    m = int(s/60)
-    h = int(m/60)
-    s = int(s%60)
-    m = int(m%60)
-        
-    s = str(s) + '.' + sec_point
-    s = float(s)
+    # h, m, s로
+    h = s // (60*60)
+    s = s - ((60*60) * h)
+    m = s // 60
+    s = s - (60*m)
 
-    return h,m,s
+    # 소수점이 있으면
+    if under_point != None:
+        s = float(str(s) + '.' + under_point)
+
+    return h, m, s
 
 
 def get_current_timestamp():
@@ -40,8 +45,15 @@ def get_current_timestamp():
 
 class StopWatch:
     '''
-    Measure interval time
+    Stopwatch
+
     unit: second(s)
+
+    public methods:
+        start()
+        pause()
+        restart()
+        stop()
     '''
     COUNTING = 'counting'
     STOPPED = 'stopped'
@@ -52,50 +64,70 @@ class StopWatch:
 
     def start(self):
         '''
-        Start measure
-        If complete successfully, return 0. but not, return 'error'
+        Start timer
+        if failed, raise exception
         '''
-        if self.state in [StopWatch.STOPPED, StopWatch.PAUSED]:
-            self.start_ = time.time()
+        if self.state == self.STOPPED:
+            self.base_time = 0
+            self.start_time = time.time()
             self.state = StopWatch.COUNTING
-            return 0
         else:
-            return 'error'
+            raise Exception('[-] stopwatch.start() error!')
     
     def pause(self):
         '''
+        Pause counting
         '''
-        pass
-
-    def stop(self, acc=2):
-        '''
-        Stop measure and return (measured sec, h:m:s format string).
-        
-        acc: ndigits to round. if -1, no round.
-
-        Return: interval time, if success. but not, 'error'
-        '''
-        if self.state in [StopWatch.COUNTING, StopWatch.PAUSED]:
-            self.interval = time.time() - self.start_
-            if acc == -1:
-                interval = self.interval
-            else:
-                interval = round(self.interval, acc)
-            self.state = StopWatch.STOPPED
-            return interval
+        if self.state == self.COUNTING:
+            result = time.time() - self.start_time
+            self.base_time += result
+            self.start_time = None
+            self.state = self.PAUSED
         else:
-            return 'error'
+            raise Exception('[-] stopwatch.pause() error!')
+
+    def restart(self):
+        '''
+        Restart paused timer
+        '''
+        if self.state == self.PAUSED:
+            self.start_time = time.time()
+            self.state = self.COUNTING
+        else:
+            raise Exception('[-] stopwatch.restart() error!')
+
+    def stop(self):
+        '''
+        Stop timer and return
+
+        return: measured time(secs)
+        '''
+        if self.state == self.COUNTING:
+            result = self.base_time + (time.time() - self.start_time)
+            self.base_time = 0
+            self.start_time = None
+
+        elif self.state == self.PAUSED:
+            result = self.base_time
+            self.base_time = 0
+
+        else:
+            raise Exception('[-] stopwatch.stop() error!')
+        
+        self.state = self.STOPPED
+        return result
 
 
-class Now:
+# TODO: edit datetime iso, add now method
+class datetime:
     '''
-    Current datetime
-    based local time
-    12-hour clock
-    support lang: eng(usa), kor
-    midnight: am 0
+    Datetime representation
+    - Default timezone: local
+    - 12-hour based time (0 <= am < 12, 12 <= pm < 24)
+    - Support lang: eng(usa), kor
+    - Midnight: 12 am
     
-    member:
+    public member:
         lang - language
         year - year
         mon - month
@@ -103,12 +135,44 @@ class Now:
         hour - hour(12-hour)
         hour_range - 'am' or 'pm'
         min - minutes
-        wday - day of the week(요일)
-        struct_time - time.struct_time obj
+        weekday_n - day of the week(요일) number
+        weekday - day of the week(요일)
         get_date_str(include_wday) - Return date string('yyyy-mm-dd www' or 'www, mm-dd-yyyy')
         get_time_str() - Return time string(hh:mm:ss)
         get_datetime_str(iso) - Return datetime string
     '''
+    MON = 0
+    TUE = 1
+    WED = 2
+    THU = 3
+    FRI = 4
+    SAT = 5
+    SUN = 6
+    wday_representation = {
+        'kor': {
+            MON: '월',
+            TUE: '화',
+            WED: '수',
+            THU: '목',
+            FRI: '금',
+            SAT: '토',
+            SUN: '일',
+        },
+        'eng': {
+            MON: 'Mon',
+            TUE: 'Tue',
+            WED: 'Wed',
+            THU: 'Thu',
+            FRI: 'Fri',
+            SAT: 'Sat',
+            SUN: 'Sun',
+        },
+    }
+    hour_representation = {
+        'kor': ['오전', '오후'],
+        'eng': ['A.M.', 'P.M.'],
+    }
+    
     def __init__(self, lang='kor'):
         '''
         Initialize member var.
@@ -116,109 +180,177 @@ class Now:
         lang: 'kor' or 'eng'. Default 'kor'.
         '''
         self.lang = lang
-        tm = time.localtime()
-        self.struct_time = tm
+        # empty
+        self.struct_time = None
+        self.datetime = None
 
-        self.year = tm.tm_year
-        self.mon = tm.tm_mon
-        self.day = tm.tm_mday
-        self.set_hour_and_hour_range()
-        self.min = tm.tm_min
-        self.sec = tm.tm_sec
-        self.set_wday()
+    def set_struct_time(self, st):
+        '''
+        Set time.struct_time obj
 
-    def set_hour_and_hour_range(self):
+        st: time.struct_time obj
         '''
-        Set hour, hour_range(am or pm)
+        # Set fields with time.struct_time
+        self.year = st.tm_year
+        self.mon = st.tm_mon
+        self.day = st.tm_mday
+        self.hour, self.hour_range = self.convert_24_to_12(st.tm_hour, self.lang)
+        self.min = st.tm_min
+        self.sec = st.tm_sec
+        self.weekday_n = st.tm_wday
+        self.weekday = self.convert_weekday(st.tm_wday, self.lang)
+        # Save st
+        self.struct_time = st
+
+    def get_struct_time(self):
         '''
-        tm = self.struct_time
-        h24 = tm.tm_hour # [0, 23]
-        if (h24 == 0) or (h24 == 24):
-            # 0, 24
-            self.hour_range = 'am'
-            self.hour = 0
-        elif 0 < h24 <= 11:
+        Return time.struct_time obj
+
+        return: time.struct_time obj
+        '''
+        # 저장해둔게 있으면 바로 리턴
+        if self.struct_time != None:
+            return self.struct_time
+        else:
+            return 
+
+    def set_datetime(self, dt):
+        '''
+        Set datetime.datetime obj
+
+        dt: datetime.datetime obj
+        '''
+        # Set fields with time.struct_time
+        self.year = dt.year
+        self.mon = dt.month
+        self.day = dt.day
+        self.hour, self.hour_range = self.convert_24_to_12(dt.hour, self.lang)
+        self.min = dt.minute
+        self.sec = dt.second
+        self.weekday_n = dt.weekday()
+        self.weekday = self.convert_weekday(self.weekday_n, self.lang)
+        # Save st
+        self.datetime = dt
+
+    def get_datetime(self):
+        '''
+        Return datetime.datetime obj
+
+        return: datetime.datetime obj
+        '''
+        if self.datetime != None:
+            return self.datetime
+        else:
+            return\
+            datetime.datetime(self.year, self.mon, self.day, self.convert_12_to_24(self.hour,self.hour_range,self.lang), self.min, self.sec)
+
+    def convert_24_to_12(self, h24, lang):
+        '''
+        Convert 24-based hour to 12-based.
+
+        h24: hour(24-based, [0,24))
+        lang: 'kor' or 'eng'
+
+        return: 12-based hour, hour_range(am or pm)
+        '''
+        # 0 ~ 11
+        if 0 <= h24 <= 11:
+            hour_range = self.hour_representation[lang][0]
+            # 0
+            if h24 == 0:
+                hour = 12
             # 1 ~ 11
-            self.hour_range = 'am'
-            self.hour = h24
-        elif h24 == 12:
+            else:
+                hour = h24
+        # 12 ~ 23
+        elif 12 <= h24 <= 23:
+            hour_range = self.hour_representation[lang][1]
             # 12
-            if tm.tm_min == 0:
-                self.hour_range = 'am'
-            else:
-                self.hour_range = 'pm'
-            self.hour = h24
-        elif 12 < h24 < 24:
+            if h24 == 12:
+                hour = 12
             # 13 ~ 23
-            self.hour_range = 'pm'
-            self.hour = h24 - 12
-
-    def set_wday(self):
-        '''
-        Set wday(day of the week, 요일)
-        '''
-        lang = self.lang
-        tm = self.struct_time
-        wday = tm.tm_wday
-        if wday == 0:
-            if lang == 'kor': self.wday = '월요일'
-            elif lang == 'eng': self.wday = 'Monday'
-        elif wday == 1:
-            if lang == 'kor': self.wday = '화요일'
-            elif lang == 'eng': self.wday = 'Tuesday'
-        elif wday == 2:
-            if lang == 'kor': self.wday = '수요일'
-            elif lang == 'eng': self.wday = 'Wednesday'
-        elif wday == 3:
-            if lang == 'kor': self.wday = '목요일'
-            elif lang == 'eng': self.wday = 'Thursday'
-        elif wday == 4:
-            if lang == 'kor': self.wday = '금요일'
-            elif lang == 'eng': self.wday = 'Friday'
-        elif wday == 5:
-            if lang == 'kor': self.wday = '토요일'
-            elif lang == 'eng': self.wday = 'Saturday'
-        elif wday == 6:
-            if lang == 'kor': self.wday = '일요일'
-            elif lang == 'eng': self.wday = 'Sunday'
-
-    def get_timestamp(self):
-        '''
-        Return TimeStamp
-        '''
-        return time.time()
-
-    def get_date_str(self, include_wday=True):
-        '''
-        Return date string('yyyy-mm-dd www' or 'www, mm-dd-yyyy')
-
-        include_wday: whther include day of the week. default True
-        '''
-        lang = self.lang
-        tm = self.struct_time
-        if lang == 'kor':
-            if include_wday:
-                self.date = time.strftime(r'%Y-%m-%d ', tm) + self.wday
             else:
-                self.date = time.strftime(r'%Y-%m-%d', tm)
-        elif lang == 'eng':
-            if include_wday:
-                self.date = time.strftime(r'%a, %m-%d-%Y', tm)
+                hour = h24 - 12
+        
+        return hour, hour_range
+
+    def convert_12_to_24(self, h12, hour_range, lang):
+        '''
+        Convert 12-based hour to 24-based.
+
+        h12: hour(12-based, [0,12])
+        hour_range: am or pm
+        lang: 'kor' or 'eng'
+
+        return: 24-based hour
+        '''
+        # am
+        if hour_range == self.hour_representation[lang][0]:
+            if h12 == 12:
+                h24 = 0
             else:
-                self.date = time.strftime(r'%m-%d-%Y', tm)
+                h24 = h12
+        # pm
+        elif hour_range == self.hour_representation[lang][1]:
+            if h12 == 12:
+                h24 = 12
+            else:
+                h24 = h12 + 12
+        
+        return h24
+
+    def convert_weekday(self, n, lang):
+        '''
+        Convert weekday num to specified lang representation
+
+        n: 0-based weekday(day of week) num
+        lang: 'kor' or 'eng'
+
+        return: weekday representation
+        '''
+        wday = self.wday_representation[lang][n]
+        return wday
+
+    def get_date_str(self, include_weekday=True):
+        '''
+        Return date string('YYYY-MM-DD w' or 'www, MM-DD-YYYY')
+
+        include_weekday: whther include day of the week. default True.
+
+        return: date string
+        '''
+        if self.lang == 'kor':
+            date_str = f'{self.year}-{self.mon}-{self.day}'
+            if include_weekday:
+                date_str += ' ' + self.weekday
+            return date_str
+        
+        elif self.lang == 'eng':
+            date_str = f'{self.mon}-{self.day}-{self.year}'
+            if include_weekday:
+                date_str = self.weekday + ', ' + date_str
+            return date_str
 
     def get_time_str(self):
         '''
         Return time string(hh:mm:ss)
+
+        return: time string
         '''
-        tm = self.struct_time
-        return time.strftime(r'%I:%M:%S %p', tm)
+        time_str = f'{self.hour}:{self.min}:{self.sec}'
+        if self.lang == 'kor':
+            time_str = self.hour_range + ' ' + time_str
+        elif self.lang == 'eng':
+            time_str += ' ' + self.hour_range
+        return time_str
 
     def get_datetime_str(self, iso=False):
         '''
         Return datetime string
 
         iso: whether using ISO format. default False
+
+        return: datetime string
         '''
         if iso:
             h, m, s = convert_sec(abs(time.timezone))
@@ -226,9 +358,20 @@ class Now:
                 offset = f'-{h:0>2}:{m:0>2}'
             else:
                 offset = f'+{h:0>2}:{m:0>2}'
-            return self.get_date_str(False) + 'T' + self.get_time_str() + offset
+            
+            if self.lang == 'kor':
+                datetime_str = self.get_date_str(False) + 'T' + self.get_time_str()[3:] + offset
+            elif self.lang == 'eng':
+                time_str = self.get_time_str().split()[0]
+                datetime_str = self.get_date_str(False) + 'T' + time_str + offset
+        
         else:
-            return self.get_date_str(True) + ' ' + self.get_time_str()
+            if self.lang == 'kor':
+                datetime_str = self.get_date_str(True) + ' ' + self.get_time_str()
+            elif self.lang == 'eng':
+                datetime_str = self.get_time_str() + ', ' + self.get_date_str(True)
+        
+        return datetime_str
     
 
 def test_StopWatch():
@@ -237,7 +380,6 @@ def test_StopWatch():
     time.sleep(1)
     w.stop()
 
-
 def test_Now():
     now = Now(lang='kor')
     print(now.year,now.mon,now.day,now.hour,now.hour_range,now.min,now.sec,now.wday,
@@ -245,6 +387,6 @@ def test_Now():
     print(now.get_datetime_str())
     print(now.get_timestamp())
 
-
 if __name__ == '__main__':
+    test_StopWatch()
     test_Now()
