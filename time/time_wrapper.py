@@ -121,6 +121,21 @@ class StopWatch:
         self.state = self.STOPPED
         return result
 
+    def start_cpu_time(self):
+        '''
+        https://wikidocs.net/15636#timing
+        Start CPU timer
+        '''
+        self.cpu_time = time.process_time()
+
+    def stop_cpu_time(self):
+        '''
+        Stop CPU timer and return cpu time
+
+        return: measured cpu time
+        '''
+        return time.process_time() - self.cpu_time
+
 
 class Datetime:
     '''
