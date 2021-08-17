@@ -1,9 +1,8 @@
 '''
-This script provides stopwatch, current time check.
-
-Defined vars: 
-Defined funcs: convert_sec(sec), get_current_timestamp()
-Defined classes: StopWatch(), Now(lang)
+This script provides:
+    - convert secs to h,m,s
+    - stopwatch
+    - datetime representation helper(Represent datetime in my format)
 '''
 
 import time
@@ -15,6 +14,8 @@ def convert_sec(sec):
     Convert sec to h,m,s format
         
     sec: second(s).
+
+    return: h, m, s
     '''
     under_point = None
     # 소수점이 있으면
@@ -36,13 +37,16 @@ def convert_sec(sec):
     return h, m, s
 
 
-def get_current_timestamp():
+def get_epoch_time():
     '''
-    Return current timestamp
+    Return current epoch time
+
+    return: epoch time
     '''
     return time.time()
 
 
+# TODO: schedule 모듈 사용
 class StopWatch:
     '''
     Stopwatch
@@ -118,8 +122,7 @@ class StopWatch:
         return result
 
 
-# TODO: edit datetime iso, add now method
-class datetime:
+class Datetime:
     '''
     Datetime representation
     - Default timezone: local
@@ -127,7 +130,7 @@ class datetime:
     - Support lang: eng(usa), kor
     - Midnight: 12 am
     
-    public member:
+    readonly member:
         lang - language
         year - year
         mon - month
@@ -137,8 +140,10 @@ class datetime:
         min - minutes
         weekday_n - day of the week(요일) number
         weekday - day of the week(요일)
+    
+    public methods:
         get_date_str(include_wday) - Return date string('yyyy-mm-dd www' or 'www, mm-dd-yyyy')
-        get_time_str() - Return time string(hh:mm:ss)
+        get_time_str() - Return time string(** hh:mm:ss or hh:mm:ss **)
         get_datetime_str(iso) - Return datetime string
     '''
     MON = 0
@@ -184,6 +189,30 @@ class datetime:
         self.struct_time = None
         self.datetime = None
 
+    @staticmethod
+    def from_struct_time(st, lang='kor'):
+        '''
+        Create obj from st
+
+        st: time.struct_time obj
+        lang: 'kor' or 'eng'. Default 'kor'.
+        '''
+        m = Datetime(lang=lang)
+        m.set_struct_time(st)
+        return m
+
+    @staticmethod
+    def from_datetime(dt, lang='kor'):
+        '''
+        Create obj from dt
+
+        dt: datetime.datetime obj
+        lang: 'kor' or 'eng'. Default 'kor'.
+        '''
+        m = Datetime(lang=lang)
+        m.set_datetime(dt)
+        return m
+
     def set_struct_time(self, st):
         '''
         Set time.struct_time obj
@@ -212,7 +241,7 @@ class datetime:
         if self.struct_time != None:
             return self.struct_time
         else:
-            return 
+            raise Exception('unavailable')
 
     def set_datetime(self, dt):
         '''
@@ -333,7 +362,7 @@ class datetime:
 
     def get_time_str(self):
         '''
-        Return time string(hh:mm:ss)
+        Return time string(** hh:mm:ss or hh:mm:ss **)
 
         return: time string
         '''
@@ -353,18 +382,26 @@ class datetime:
         return: datetime string
         '''
         if iso:
-            h, m, s = convert_sec(abs(time.timezone))
-            if time.timezone > 0:
-                offset = f'-{h:0>2}:{m:0>2}'
+            # make offset string
+            if time.timezone == 0:
+                offset_str = 'Z'
             else:
-                offset = f'+{h:0>2}:{m:0>2}'
-            
+                h, m, s = convert_sec(abs(time.timezone))
+                offset_str = f'{h:0>2}:{m:0>2}'
+                # 음수
+                if time.timezone < 0:
+                    offset_str = '+' + offset_str
+                # 양수
+                else:
+                    offset_str = '-' + offset_str
+            # make iso datetime string
             if self.lang == 'kor':
-                datetime_str = self.get_date_str(False) + 'T' + self.get_time_str()[3:] + offset
+                datetime_str = self.get_date_str(False) + 'T' + self.get_time_str()[3:] + offset_str
             elif self.lang == 'eng':
                 time_str = self.get_time_str().split()[0]
-                datetime_str = self.get_date_str(False) + 'T' + time_str + offset
+                datetime_str = self.get_date_str(False) + 'T' + time_str + offset_str
         
+        # make full datetime string
         else:
             if self.lang == 'kor':
                 datetime_str = self.get_date_str(True) + ' ' + self.get_time_str()
@@ -378,15 +415,18 @@ def test_StopWatch():
     w = StopWatch()
     w.start()
     time.sleep(1)
-    w.stop()
+    w.pause()
+    print(w.base_time)
+    w.restart()
+    time.sleep(3)
+    print(w.stop())
 
-def test_Now():
-    now = Now(lang='kor')
-    print(now.year,now.mon,now.day,now.hour,now.hour_range,now.min,now.sec,now.wday,
-    now.get_date_str(),now.get_time_str,sep=' ',end='\n\n')
-    print(now.get_datetime_str())
-    print(now.get_timestamp())
+def test_Datetime():
+    m = Datetime.from_datetime(datetime.datetime.today(), lang='kor')
+    print(m.year,m.mon,m.day,m.hour,m.hour_range,m.min,m.sec,m.weekday,
+    sep=' ',end='\n\n')
+    print(m.get_datetime_str())
 
 if __name__ == '__main__':
     test_StopWatch()
-    test_Now()
+    test_Datetime()
