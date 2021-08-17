@@ -46,7 +46,6 @@ def get_epoch_time():
     return time.time()
 
 
-# TODO: schedule 모듈 사용
 class StopWatch:
     '''
     Stopwatch
