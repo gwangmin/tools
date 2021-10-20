@@ -10,8 +10,8 @@ from functools import wraps
 
 # for IPC
 queue = mp.SimpleQueue()
-# number of current cpu
-cpu_count = mp.cpu_count()
+# number of current processors
+proc_count = mp.cpu_count()
 # sync
 lock = mp.Lock()
 # default context
