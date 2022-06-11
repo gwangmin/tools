@@ -6,7 +6,7 @@ handle data is bytes or string
 but not exception handling because of debugging
 
 
-How to use socket
+How to use sock
 
 Server
 1. Create sock().
@@ -157,7 +157,9 @@ class sock(object):
 
         ### 1
         for _ in range(length):
-            buf += self.sock.recv(1)
+            data = self.sock.recv(1)
+            if not data: raise Exception('closed')
+            buf += data
 
         ### 2
         #while True:
@@ -201,7 +203,9 @@ class sock(object):
 
         ### 1
         while True:
-            buf += self.sock.recv(1)
+            data = self.sock.recv(1)
+            if not data: raise Exception('closed')
+            buf += data
             if buf.endswith(delimiter):
                 break
 
